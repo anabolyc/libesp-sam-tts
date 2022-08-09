@@ -23,6 +23,9 @@
 #include "sam.h"
 #include "SamData.h"
 
+String numbers10[10] = { "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eight teen", "nine teen" };
+String numbers100[8] = { "twenty", "thirty", "forty", "fifty", "sixty", "sevety", "eight tee", "nine tee"};
+
 SamData* samdata;
 
 // Thunk from C to C++ with a this-> pointer
@@ -41,7 +44,35 @@ void ESPSAM::OutputByte(unsigned char b)
   sample[1] = s16;
   while (!output->ConsumeSample(sample)) yield();
 }
-  
+
+bool ESPSAM::Say(AudioOutput *out, const uint32_t number) 
+{
+  bool result = true;
+  if (number < 10) {
+    result = Say(out, String(number).c_str());
+  }
+  else if (number < 20) {
+    result = Say(out, numbers10[number - 10].c_str());
+  } else if (number < 100) {
+    uint8_t a = number % 10;
+    uint8_t b = (number - a) / 10;
+    result &= Say(out, numbers100[b - 2].c_str());
+    if (a != 0) {
+      result &= Say(out, String(a).c_str());
+    }
+  } else {
+    uint8_t h = number / 100;
+    result &= Say(out, String(h).c_str());
+    result &= Say(out, "hundred");
+    uint8_t left = number - h * 100;
+    if (left != 0) {
+      result &= Say(out, left);
+    }
+  }
+
+  return result;
+}
+
 bool ESPSAM::Say(AudioOutput *out, const char *str)
 {
   if (!str || strlen(str)>254) return false; // Only can speak up to 1 page worth of data...

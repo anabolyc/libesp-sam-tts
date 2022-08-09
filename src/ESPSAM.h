@@ -50,6 +50,7 @@ public:
   void SetSpeed(uint8_t val) { speed = val; }
 
   bool Say(AudioOutput *out, const char *str);
+  bool Say(AudioOutput *out, const uint32_t number);
   bool Say_P(AudioOutput *out, const char *str) {
     char ram[256];
     strncpy_P(ram, str, 256);
