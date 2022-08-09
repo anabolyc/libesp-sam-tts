@@ -1,5 +1,5 @@
 /*
-  ESP8266SAM
+  ESPSAM
   Port of SAM to the ESP8266
   
   Copyright (C) 2017  Earle F. Philhower, III
@@ -17,7 +17,7 @@
 
 
 #include <Arduino.h>
-#include <ESP8266SAM.h>
+#include <ESPSAM.h>
 
 #include "reciter.h"
 #include "sam.h"
@@ -26,13 +26,13 @@
 SamData* samdata;
 
 // Thunk from C to C++ with a this-> pointer
-void ESP8266SAM::OutputByteCallback(void *cbdata, unsigned char b)
+void ESPSAM::OutputByteCallback(void *cbdata, unsigned char b)
 {
-  ESP8266SAM *sam = static_cast<ESP8266SAM*>(cbdata);
+  ESPSAM *sam = static_cast<ESPSAM*>(cbdata);
   sam->OutputByte(b);
 }
 
-void ESP8266SAM::OutputByte(unsigned char b)
+void ESPSAM::OutputByte(unsigned char b)
 {
   // Xvert unsigned 8 to signed 16...
   int16_t s16 = b;// s16 -= 128; //s16 *= 128;
@@ -42,7 +42,7 @@ void ESP8266SAM::OutputByte(unsigned char b)
   while (!output->ConsumeSample(sample)) yield();
 }
   
-bool ESP8266SAM::Say(AudioOutput *out, const char *str)
+bool ESPSAM::Say(AudioOutput *out, const char *str)
 {
   if (!str || strlen(str)>254) return false; // Only can speak up to 1 page worth of data...
   samdata = new SamData;
@@ -87,7 +87,7 @@ bool ESP8266SAM::Say(AudioOutput *out, const char *str)
   return true;
 }
 
-void ESP8266SAM::SetVoice(enum SAMVoice voice)
+void ESPSAM::SetVoice(enum SAMVoice voice)
 {
   switch (voice) {
     case VOICE_ELF: SetSpeed(72); SetPitch(64); SetThroat(110); SetMouth(160); break;

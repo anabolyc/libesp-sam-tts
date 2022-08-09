@@ -1,5 +1,5 @@
 /*
-  ESP8266SAM
+  ESPSAM
   Port of SAM to the ESP8266
   
   Copyright (C) 2017  Earle F. Philhower, III
@@ -15,16 +15,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _ESP8266SAM_H
-#define _ESP8266SAM_H
+#ifndef _ESPSAM_H
+#define _ESPSAM_H
 
 #include <Arduino.h>
 #include <AudioOutput.h>
 
-class ESP8266SAM {
+class ESPSAM {
 
 public:
-  ESP8266SAM()
+  ESPSAM()
   {
     singmode = false;
     phonetic = false;
@@ -35,7 +35,7 @@ public:
     output = NULL;
   };
   
-  ~ESP8266SAM()
+  ~ESPSAM()
   {
   }
 

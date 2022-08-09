@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include <ESP8266SAM.h>
+#include <ESPSAM.h>
 #include <AudioOutputI2S.h>
 
 // #include <ESP8266mDNS.h>
@@ -69,7 +69,7 @@ void setup()
     Serial.println(message_decoded);
     Serial.println(message);
     
-    ESP8266SAM *sam = new ESP8266SAM;
+    ESPSAM *sam = new ESPSAM;
     sam->Say(out, message);
     delete sam;    
     server.send(200, "text/plain", "OK"); 

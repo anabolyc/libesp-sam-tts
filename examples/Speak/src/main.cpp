@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <ESP8266SAM.h>
+#include <ESPSAM.h>
 #include <AudioOutputI2S.h>
 
 AudioOutputI2S *out = NULL;
@@ -12,7 +12,7 @@ void setup()
 
 void loop()
 {
-  ESP8266SAM *sam = new ESP8266SAM;
+  ESPSAM *sam = new ESPSAM;
   sam->Say(out, "Can you hear me now?");
   delay(500);
   sam->Say(out, "I can't hear you!");

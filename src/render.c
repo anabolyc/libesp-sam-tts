@@ -5,7 +5,7 @@
 #include "render.h"
 #include "RenderTabs.h"
 
-#include "esp8266sam_debug.h"
+#include "espsam_debug.h"
 #include <pgmspace.h>
 #include "SamData.h"
 
@@ -444,7 +444,7 @@ do
 	mem44++;
 } while(mem44 != 0);
 yield();
-if (DEBUG_ESP8266SAM_LIB)
+if (DEBUG_ESPSAM_LIB)
 {
         PrintOutput(sampledConsonantFlag, frequency1, frequency2, frequency3, amplitude1, amplitude2, amplitude3, pitches);
 }
@@ -785,7 +785,7 @@ if (DEBUG_ESP8266SAM_LIB)
 	X = A;
 	mem38 = A - (A>>2);     // 3/4*A ???
 yield();
-if (DEBUG_ESP8266SAM_LIB)
+if (DEBUG_ESPSAM_LIB)
 {
         PrintOutput(sampledConsonantFlag, frequency1, frequency2, frequency3, amplitude1, amplitude2, amplitude3, pitches);
 }

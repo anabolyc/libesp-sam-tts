@@ -2,7 +2,7 @@
 #include <string.h> // strlen()
 //#include <stdlib.h>
 #include <stddef.h> // define NULL
-#include "esp8266sam_debug.h"
+#include "espsam_debug.h"
 #include "sam.h"
 #include "render.h"
 #include "SamTabs.h"
@@ -144,7 +144,7 @@ int SAMMain( void (*cb)(void *, unsigned char), void *cbd )
 	phonemeindex[255] = 32; //to prevent buffer overflow
 
 	if (!Parser1()) return 0;
-	if (DEBUG_ESP8266SAM_LIB)
+	if (DEBUG_ESPSAM_LIB)
 		PrintPhonemes(phonemeindex, phonemeLength, stress);
 	Parser2();
 	CopyStress();
@@ -166,7 +166,7 @@ int SAMMain( void (*cb)(void *, unsigned char), void *cbd )
 	InsertBreath();
 
 	//mem[40158] = 255;
-	if (DEBUG_ESP8266SAM_LIB)
+	if (DEBUG_ESPSAM_LIB)
 	{
 		PrintPhonemes(phonemeindex, phonemeLength, stress);
 	}
@@ -643,7 +643,7 @@ void Code41240()
 //void Code41397()
 void Parser2()
 {
-	if (DEBUG_ESP8266SAM_LIB) printf("Parser2\n");
+	if (DEBUG_ESPSAM_LIB) printf("Parser2\n");
 	unsigned char pos = 0; //mem66;
 	unsigned char mem58 = 0;
 
@@ -657,7 +657,7 @@ void Parser2()
 		A = phonemeindex[pos];
 
 // DEBUG: Print phoneme and index
-		if (DEBUG_ESP8266SAM_LIB && A != 255) printf("%d: %c%c\n", X, signInputTable1[A], signInputTable2[A]);
+		if (DEBUG_ESPSAM_LIB && A != 255) printf("%d: %c%c\n", X, signInputTable1[A], signInputTable2[A]);
 
 // Is phoneme pause?
 		if (A == 0)
@@ -693,8 +693,8 @@ void Parser2()
 		//pos41443:
 // Insert at WX or YX following, copying the stress
 
-		if (DEBUG_ESP8266SAM_LIB) if (A==20) printf("RULE: insert WX following diphtong NOT ending in IY sound\n");
-		if (DEBUG_ESP8266SAM_LIB) if (A==21) printf("RULE: insert YX following diphtong ending in IY sound\n");
+		if (DEBUG_ESPSAM_LIB) if (A==20) printf("RULE: insert WX following diphtong NOT ending in IY sound\n");
+		if (DEBUG_ESPSAM_LIB) if (A==21) printf("RULE: insert YX following diphtong ending in IY sound\n");
 		Insert(pos+1, A, mem59, mem58);
 		X = pos;
 // Jump to ???
@@ -714,7 +714,7 @@ pos41457:
 		if (A != 78) goto pos41487;  // 'UL'
 		A = 24;         // 'L'                 //change 'UL' to 'AX L'
 
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: UL -> AX L\n");
+		if (DEBUG_ESPSAM_LIB) printf("RULE: UL -> AX L\n");
 
 pos41466:
 // Get current phoneme stress
@@ -738,7 +738,7 @@ pos41487:
 		if (A != 79) goto pos41495;   // 'UM'
 		// Jump up to branch - replaces current phoneme with AX and continues
 		A = 27; // 'M'  //change 'UM' to  'AX M'
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: UM -> AX M\n");
+		if (DEBUG_ESPSAM_LIB) printf("RULE: UM -> AX M\n");
 		goto pos41466;
 pos41495:
 
@@ -752,7 +752,7 @@ pos41495:
 
 		// Jump up to branch - replaces current phoneme with AX and continues
 		A = 28;         // 'N' //change UN to 'AX N'
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: UN -> AX N\n");
+		if (DEBUG_ESPSAM_LIB) printf("RULE: UN -> AX N\n");
 		goto pos41466;
 pos41503:
 
@@ -800,7 +800,7 @@ pos41503:
 						if (A != 0)
 						{
 // Insert a glottal stop and move forward
-							if (DEBUG_ESP8266SAM_LIB) printf("RULE: Insert glottal stop between two stressed vowels with space between them\n");
+							if (DEBUG_ESPSAM_LIB) printf("RULE: Insert glottal stop between two stressed vowels with space between them\n");
 							// 31 = 'Q'
 							Insert(X, 31, mem59, 0);
 							pos++;
@@ -829,7 +829,7 @@ pos41503:
 		if (A == 69)                    // 'T'
 		{
 // Change T to CH
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: T R -> CH R\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: T R -> CH R\n");
 			phonemeindex[pos-1] = 42;
 			goto pos41779;
 		}
@@ -844,7 +844,7 @@ pos41503:
 		{
 // Change D to J
 			phonemeindex[pos-1] = 44;
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: D R -> J R\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: D R -> J R\n");
 			goto pos41788;
 		}
 
@@ -855,7 +855,7 @@ pos41503:
 
 // If vowel flag is set change R to RX
 		A = flags[A] & 128;
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: R -> RX\n");
+		if (DEBUG_ESPSAM_LIB) printf("RULE: R -> RX\n");
 		if (A != 0) phonemeindex[pos] = 18;  // 'RX'
 
 // continue to next phoneme
@@ -874,7 +874,7 @@ pos41611:
 // If prior phoneme does not have VOWEL flag set, move to next phoneme
 			if ((flags[phonemeindex[pos-1]] & 128) == 0) {pos++; continue;}
 // Prior phoneme has VOWEL flag set, so change L to LX and move to next phoneme
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: <VOWEL> L -> <VOWEL> LX\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: <VOWEL> L -> <VOWEL> LX\n");
 			phonemeindex[X] = 19;     // 'LX'
 			pos++;
 			continue;
@@ -893,7 +893,7 @@ pos41611:
 // If prior phoneme is not G, move to next phoneme
 			if (phonemeindex[pos-1] != 60) {pos++; continue;}
 // Replace S with Z and move on
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: G S -> G Z\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: G S -> G Z\n");
 			phonemeindex[pos] = 38;    // 'Z'
 			pos++;
 			continue;
@@ -914,7 +914,7 @@ pos41611:
 			{
 // VOWELS AND DIPHTONGS ENDING WITH IY SOUND flag set?
 				A = flags[Y] & 32;
-				if (DEBUG_ESP8266SAM_LIB) if (A==0) printf("RULE: K <VOWEL OR DIPHTONG NOT ENDING WITH IY> -> KX <VOWEL OR DIPHTONG NOT ENDING WITH IY>\n");
+				if (DEBUG_ESPSAM_LIB) if (A==0) printf("RULE: K <VOWEL OR DIPHTONG NOT ENDING WITH IY> -> KX <VOWEL OR DIPHTONG NOT ENDING WITH IY>\n");
 // Replace with KX
 				if (A == 0) phonemeindex[pos] = 75;  // 'KX'
 			}
@@ -941,7 +941,7 @@ pos41611:
 // If diphtong ending with YX, move continue processing next phoneme
 			if ((flags[index] & 32) != 0) {pos++; continue;}
 // replace G with GX and continue processing next phoneme
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: G <VOWEL OR DIPHTONG NOT ENDING WITH IY> -> GX <VOWEL OR DIPHTONG NOT ENDING WITH IY>\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: G <VOWEL OR DIPHTONG NOT ENDING WITH IY> -> GX <VOWEL OR DIPHTONG NOT ENDING WITH IY>\n");
 			phonemeindex[pos] = 63; // 'GX'
 			pos++;
 			continue;
@@ -966,7 +966,7 @@ pos41611:
 			goto pos41812;
 		}
 		// Replace with softer version
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: S* %c%c -> S* %c%c\n", signInputTable1[Y], signInputTable2[Y],signInputTable1[Y-12], signInputTable2[Y-12]);
+		if (DEBUG_ESPSAM_LIB) printf("RULE: S* %c%c -> S* %c%c\n", signInputTable1[Y], signInputTable2[Y],signInputTable1[Y-12], signInputTable2[Y-12]);
 		phonemeindex[pos] = Y-12;
 		pos++;
 		continue;
@@ -989,7 +989,7 @@ pos41749:
 			A = flags2[Y] & 4;
 // If not set, continue processing next phoneme
 			if (A == 0) {pos++; continue;}
-			if (DEBUG_ESP8266SAM_LIB) printf("RULE: <ALVEOLAR> UW -> <ALVEOLAR> UX\n");
+			if (DEBUG_ESPSAM_LIB) printf("RULE: <ALVEOLAR> UW -> <ALVEOLAR> UX\n");
 			phonemeindex[X] = 16;
 			pos++;
 			continue;
@@ -1003,7 +1003,7 @@ pos41779:
 		if (A == 42)    // 'CH'
 		{
 			//        pos41783:
-			if (DEBUG_ESP8266SAM_LIB) printf("CH -> CH CH+1\n");
+			if (DEBUG_ESPSAM_LIB) printf("CH -> CH CH+1\n");
 			Insert(X+1, A+1, mem59, stress[X]);
 			pos++;
 			continue;
@@ -1018,7 +1018,7 @@ pos41788:
 
 		if (A == 44) // 'J'
 		{
-			if (DEBUG_ESP8266SAM_LIB) printf("J -> J J+1\n");
+			if (DEBUG_ESPSAM_LIB) printf("J -> J J+1\n");
 			Insert(X+1, A+1, mem59, stress[X]);
 			pos++;
 			continue;
@@ -1058,7 +1058,7 @@ pos41812:
 			if (stress[X] != 0) {pos++; continue;}
 //pos41856:
 // Set phonemes to DX
-		if (DEBUG_ESP8266SAM_LIB) printf("RULE: Soften T or D following vowel or ER and preceding a pause -> DX\n");
+		if (DEBUG_ESPSAM_LIB) printf("RULE: Soften T or D following vowel or ER and preceding a pause -> DX\n");
 		phonemeindex[pos] = 30;       // 'DX'
 		} else
 		{
@@ -1068,7 +1068,7 @@ pos41812:
 			else
 // Is next phoneme a vowel or ER?
 				A = flags[A] & 128;
-			if (DEBUG_ESP8266SAM_LIB) if (A != 0) printf("RULE: Soften T or D following vowel or ER and preceding a pause -> DX\n");
+			if (DEBUG_ESPSAM_LIB) if (A != 0) printf("RULE: Soften T or D following vowel or ER and preceding a pause -> DX\n");
 			if (A != 0) phonemeindex[pos] = 30;  // 'DX'
 		}
 
@@ -1158,14 +1158,14 @@ pos48644:
 
 				// change phoneme length to (length * 1.5) + 1
 				A = (A >> 1) + A + 1;
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: Lengthen <FRICATIVE> or <VOICED> between <VOWEL> and <PUNCTUATION> by 1.5\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: Lengthen <FRICATIVE> or <VOICED> between <VOWEL> and <PUNCTUATION> by 1.5\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
 
 				phonemeLength[X] = A;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
 
 			}
             // keep moving forward
@@ -1219,15 +1219,15 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTa
                         // RULE: <VOWEL> RX | LX <CONSONANT>
 
 
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <VOWEL> <RX | LX> <CONSONANT> - decrease length by 1\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", loopIndex, signInputTable1[phonemeindex[loopIndex]], signInputTable2[phonemeindex[loopIndex]], phonemeLength[loopIndex]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <VOWEL> <RX | LX> <CONSONANT> - decrease length by 1\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", loopIndex, signInputTable1[phonemeindex[loopIndex]], signInputTable2[phonemeindex[loopIndex]], phonemeLength[loopIndex]);
 
                         // decrease length of vowel by 1 frame
     					phonemeLength[loopIndex]--;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", loopIndex, signInputTable1[phonemeindex[loopIndex]], signInputTable2[phonemeindex[loopIndex]], phonemeLength[loopIndex]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", loopIndex, signInputTable1[phonemeindex[loopIndex]], signInputTable2[phonemeindex[loopIndex]], phonemeLength[loopIndex]);
 
                     }
                     // move ahead
@@ -1265,16 +1265,16 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", loopIndex, sig
                 // move back
 				X--;
 
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <VOWEL> <UNVOICED PLOSIVE> - decrease vowel by 1/8th\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]],  phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <VOWEL> <UNVOICED PLOSIVE> - decrease vowel by 1/8th\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]],  phonemeLength[X]);
 
                 // decrease length by 1/8th
 				mem56 = phonemeLength[X] >> 3;
 				phonemeLength[X] -= mem56;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
 
                 // move ahead
 				loopIndex++;
@@ -1284,16 +1284,16 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTa
             // RULE: <VOWEL> <VOICED CONSONANT>
             // <VOWEL> <WH, R*, L*, W*, Y*, M*, N*, NX, DX, Q*, Z*, ZH, V*, DH, J*, B*, D*, G*, GX>
 
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <VOWEL> <VOICED CONSONANT> - increase vowel by 1/2 + 1\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]],  phonemeLength[X-1]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <VOWEL> <VOICED CONSONANT> - increase vowel by 1/2 + 1\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]],  phonemeLength[X-1]);
 
             // decrease length
 			A = phonemeLength[X-1];
 			phonemeLength[X-1] = (A >> 2) + A + 1;     // 5/4*A + 1
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
 
             // move ahead
 			loopIndex++;
@@ -1333,10 +1333,10 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInput
                // B*, D*, G*, GX, P*, T*, K*, KX
 
             {
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <NASAL> <STOP CONSONANT> - set nasal = 5, consonant = 6\n");
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <NASAL> <STOP CONSONANT> - set nasal = 5, consonant = 6\n");
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
 
                 // set stop consonant length to 6
                 phonemeLength[X] = 6;
@@ -1344,9 +1344,9 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInput
                 // set nasal length to 5
                 phonemeLength[X-1] = 5;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
 
             }
             // move to next phoneme
@@ -1386,10 +1386,10 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInput
             }
 
             // RULE: <UNVOICED STOP CONSONANT> {optional silence} <STOP CONSONANT>
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <UNVOICED STOP CONSONANT> {optional silence} <STOP CONSONANT> - shorten both to 1/2 + 1\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <UNVOICED STOP CONSONANT> {optional silence} <STOP CONSONANT> - shorten both to 1/2 + 1\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[phonemeindex[X-1]], signInputTable2[phonemeindex[X-1]], phonemeLength[X-1]);
 // X gets overwritten, so hold prior X value for debug statement
 int debugX = X;
             // shorten the prior phoneme length to (length/2 + 1)
@@ -1399,9 +1399,9 @@ int debugX = X;
             // also shorten this phoneme length to (length/2 +1)
             phonemeLength[loopIndex] = (phonemeLength[loopIndex] >> 1) + 1;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", debugX, signInputTable1[phonemeindex[debugX]], signInputTable2[phonemeindex[debugX]], phonemeLength[debugX]);
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", debugX-1, signInputTable1[phonemeindex[debugX-1]], signInputTable2[phonemeindex[debugX-1]], phonemeLength[debugX-1]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", debugX, signInputTable1[phonemeindex[debugX]], signInputTable2[phonemeindex[debugX]], phonemeLength[debugX]);
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", debugX-1, signInputTable1[phonemeindex[debugX-1]], signInputTable2[phonemeindex[debugX-1]], phonemeLength[debugX-1]);
 
 
             // move ahead
@@ -1427,15 +1427,15 @@ if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", debugX-1, sign
             if((flags[index] & 2) != 0)
                              // Rule: <LIQUID CONSONANT> <DIPHTONG>
 
-if (DEBUG_ESP8266SAM_LIB) printf("RULE: <LIQUID CONSONANT> <DIPHTONG> - decrease by 2\n");
-if (DEBUG_ESP8266SAM_LIB) printf("PRE\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("RULE: <LIQUID CONSONANT> <DIPHTONG> - decrease by 2\n");
+if (DEBUG_ESPSAM_LIB) printf("PRE\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
 
              // decrease the phoneme length by 2 frames (20 ms)
              phonemeLength[X] -= 2;
 
-if (DEBUG_ESP8266SAM_LIB) printf("POST\n");
-if (DEBUG_ESP8266SAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+if (DEBUG_ESPSAM_LIB) printf("POST\n");
+if (DEBUG_ESPSAM_LIB) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
          }
 
          // move to next phoneme
